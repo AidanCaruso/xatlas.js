@@ -56,7 +56,7 @@ export const Api = (createXAtlasModule)=>{
         addMesh(indexes, vertices, normals=null, coords=null, meshObj=undefined, useNormals = false, useCoords = false, scale =1){
             if(!this.loaded || !this.atlasCreated) throw "Create atlas first";
             const meshDesc = this.xatlas.createMesh(vertices.length / 3, indexes.length, normals != null && useNormals, coords != null && useCoords)
-            this.xatlas.HEAPU16.set(indexes, meshDesc.indexOffset/2);
+            this.xatlas.HEAPU32.set(indexes, meshDesc.indexOffset/4);
 
             const vs = new Float32Array([...vertices])
             if(scale!==1) {
@@ -139,8 +139,8 @@ export const Api = (createXAtlasModule)=>{
             for (const {meshId, meshObj, vertices, normals, coords} of this.meshes) {
                 const ret = this.getMeshData(meshId)
                 const vCount = ret.newVertexCount;
-                const index = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.indexOffset / 4, ret.indexOffset / 4 + ret.newIndexCount))
-                const oldIndexes = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset / 4, ret.originalIndexOffset / 4 + vCount))
+                const index = new Uint32Array(this.xatlas.HEAPU32.subarray(ret.indexOffset / 4, ret.indexOffset / 4 + ret.newIndexCount))
+                const oldIndexes = new Uint32Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset / 4, ret.originalIndexOffset / 4 + vCount))
                 // const atlasIndexes = atlas.atlasCount > 1 ? new Uint16Array(this.xatlas.HEAPU32.subarray(ret.atlasIndexOffset / 4, ret.atlasIndexOffset / 4 + ret.newIndexCount)) : null;
                 const xcoords = new Float32Array(this.xatlas.HEAPF32.subarray(ret.uvOffset / 4, ret.uvOffset / 4 + vCount * 2))
 
